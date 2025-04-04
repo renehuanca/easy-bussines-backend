@@ -1,6 +1,6 @@
 # Easy Business Backend
 
-![Swagger Documentation](https://raw.githubusercontent.com/renehuanca/easy-bussines-backend/main/public/images/swagger.png)
+![Swagger Documentation](https://github.com/renehuanca/easy-bussines-backend/blob/5dcbbc929ca4837b0c5ca768eb5706bb4b0e8e18/public/images/swagger.png)
 
 [![Downloads](https://img.shields.io/github/downloads/renehuanca/easy-bussines-backend/total.svg)](https://github.com/renehuanca/easy-bussines-backend/releases)
 [![License](https://img.shields.io/github/license/renehuanca/easy-bussines-backend.svg)](LICENSE)
