@@ -23,10 +23,6 @@ namespace App\Http\Controllers;
  *     scheme="bearer",
  *     bearerFormat="JWT"
  * )
- * 
- * @OA\PathItem(
- *     path="/api"
- * )
  */
 abstract class Controller
 {

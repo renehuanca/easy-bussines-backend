@@ -4,18 +4,173 @@
         "title": "Easy Business API Documentation",
         "description": "API documentation for Easy Business application",
         "contact": {
-            "email": "support@easybusiness.com"
+            "email": "renehuanca999@gmail.com"
         },
         "version": "1.0.0"
     },
     "servers": [
         {
-            "url": "http://my-default-host.com",
+            "url": "http://localhost:8000/api/v1",
             "description": "API Server"
         }
     ],
     "paths": {
-        "/api": {}
+        "/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "operationId": "0903f2e0df1a8857bee538fc055417f0",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "jhon@gmail.com"
+                                    },
+                                    "phone_number": {
+                                        "type": "string",
+                                        "example": "081234567890"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "AV. 1, No. 2, 3rd Floor"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "secretpassword"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "secretpassword"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "0|WYgnFtfJU6oMR8Q852lFPjtyjRSuSHjolb98q9kx"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "example": "jhon@gmail.com"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "example": "customer"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2023-11-02T14:03:55.000000Z"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2023-11-02T14:03:55.000000Z"
+                                                },
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Content"
+                    }
+                }
+            }
+        },
+        "/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get the authenticated user",
+                "operationId": "e18baa7d6dfc432241dca2fc1985ce40",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "example": "John Doe"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "format": "email",
+                                            "example": "jhon@gmail.com"
+                                        },
+                                        "role": {
+                                            "type": "string",
+                                            "example": "customer"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2023-11-02T14:03:55.000000Z"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2023-11-02T14:03:55.000000Z"
+                                        },
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
     },
     "components": {
         "securitySchemes": {
@@ -25,5 +180,11 @@
                 "scheme": "bearer"
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Authentication endpoints"
+        }
+    ]
 }
