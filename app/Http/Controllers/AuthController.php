@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
 
 /**
  * @OA\Tag(
@@ -55,11 +56,16 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'phone_number' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'phone_number' => $request->phone_number,
+            'address' => $request->address,
             'password' => Hash::make($request->password),
         ]);
         
@@ -67,36 +73,40 @@ class AuthController extends Controller
 
         return response()->json([
             'access_token' => $token,
-        ]);        
+            'user' => $user
+        ], Response::HTTP_CREATED);        
     }
+
 
     /**
-     * @OA\Get(
+     * @OA\Post(
      *     tags={"Auth"},
-     *     path="/me",
-     *     summary="Get the authenticated user",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
-     *          response="200", 
-     *          description="Successful operation",
-     *          @OA\JsonContent(
-     *              type="object",
-     *              @OA\Property(property="name", type="string", example="John Doe"),
-     *              @OA\Property(property="email", type="string", format="email", example="jhon@gmail.com"),
-     *              @OA\Property(property="role", type="string", example="customer"),
-     *              @OA\Property(property="updated_at", type="string", format="date-time", example="2023-11-02T14:03:55.000000Z"),
-     *              @OA\Property(property="created_at", type="string", format="date-time", example="2023-11-02T14:03:55.000000Z"),
-     *              @OA\Property(property="id", type="integer", example=1),
-     *          )
+     *     path="/login",
+     *     summary="Login user and create token",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email","password"},
+     *             @OA\Property(property="email", type="string", format="email", example="jhon@gmail.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="password123")
+     *         )
      *     ),
-     *     @OA\Response(response="401", description="Unauthorized"),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="access_token", type="string", example="1|abcdef123456")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Invalid credentials",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Invalid credentials")
+     *         )
+     *     )
      * )
      */
-    public function me(Request $request)
-    {
-        return response()->json($request->user());
-    }
-
     public function login(Request $request)
     {
         $request->validate([
@@ -105,7 +115,7 @@ class AuthController extends Controller
         ]);
 
         if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            return response()->json(['message' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
         }
 
         $user = Auth::user();
@@ -113,6 +123,32 @@ class AuthController extends Controller
 
         return response()->json([
             'access_token' => $token,
-        ]);
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * @OA\Delete(
+     *     tags={"Auth"},
+     *     path="/logout",
+     *     summary="Logout user (Revoke the token)",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully logged out",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Logged out successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     )
+     * )
+     */
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+
+        return response()->json(['message' => 'Logged out successfully'], Response::HTTP_OK);
     }
 }
